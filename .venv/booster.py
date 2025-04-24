@@ -13,7 +13,6 @@ PACK_STRUCTURE = {
 
 COLLECTION_FILE = "collection.json"
 
-
 def get_random_card(rarity=None, is_foil=False):
     """Fetch a random card from Scryfall by rarity or any foil."""
     time.sleep(0.1)  # Respect rate limits
@@ -31,7 +30,6 @@ def get_random_card(rarity=None, is_foil=False):
     else:
         print("❌ Error fetching card:", response.status_code)
         return None
-
 
 def open_booster():
     """Simulate opening a booster with foil and mythic logic."""
@@ -78,7 +76,6 @@ def open_booster():
 
     return pack
 
-
 def load_collection():
     """Load your collection from a local file."""
     if os.path.exists(COLLECTION_FILE):
@@ -87,7 +84,6 @@ def load_collection():
     else:
         return []
 
-
 def save_to_collection(pack, collection):
     """Update your collection with new pack cards."""
     for card in pack:
@@ -95,6 +91,9 @@ def save_to_collection(pack, collection):
         set_code = card['set']
         number = card['collector_number']
         is_foil = card.get('is_foil', False)
+
+        # Ensure we get the image URL safely
+        image_url = card.get('image_uris', {}).get('normal', '')  # Get the normal image URI
 
         # Check if this exact printing is already in collection
         found = False
@@ -113,12 +112,12 @@ def save_to_collection(pack, collection):
                 "set": set_code,
                 "collector_number": number,
                 "count": 1,
-                "is_foil": is_foil
+                "is_foil": is_foil,
+                "image_url": image_url  # Save the image URL in the collection
             })
 
     with open(COLLECTION_FILE, "w", encoding="utf-8") as f:
         json.dump(collection, f, indent=2, ensure_ascii=False)
-
 
 def show_collection(collection):
     """Print out the user's card collection nicely."""
@@ -126,11 +125,3 @@ def show_collection(collection):
     for card in sorted(collection, key=lambda x: x['name']):
         foil_tag = " (FOIL)" if card.get("is_foil", False) else ""
         print(f"  {card['count']}x {card['name']}{foil_tag} ({card['set'].upper()} #{card['collector_number']})")
-
-
-# Main execution
-if __name__ == "__main__":
-    collection = load_collection()
-    booster = open_booster()
-    save_to_collection(booster, collection)
-    show_collection(collection)
