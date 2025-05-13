@@ -117,6 +117,3 @@ If you'd like to contribute to this project, feel free to fork the repository an
 
 This project is open source and available under the [MIT License](LICENSE).
 
----
-
-Feel free to adjust the README as needed based on your app's specifics, any additional features you add, or particular instructions relevant to your project.
